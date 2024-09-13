@@ -1,13 +1,11 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import './index.css'; // tailwind
+import React from "react";
+import ReactDOM from "react-dom";
+import "./styles/index.css"; // tailwind
+import App from "./App";
 
-function App() {
-	return (
-		<div className="h-screen bg-gray-100 flex justify-center items-center">
-			<h1 className="text-4xl text-blue-500">Out of Sight, Out of Mind App</h1>
-		</div>
-	);
-}
-
-ReactDOM.render(<App />, document.getElementById('root'));
+const root = ReactDOM.createRoot(document.getElementById("root"));
+root.render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>,
+);
