@@ -3,7 +3,7 @@ import Sidebar from "./components/Sidebar";
 
 function App() {
   // Hooks
-
+  
   return (
     <div className="flex w-full h-full">
       <Sidebar />
