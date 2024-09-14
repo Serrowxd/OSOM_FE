@@ -1,10 +1,15 @@
 import React from "react";
 
 function Sidebar() {
+  
+  // rewrite this later, just have it update every few seconds.
+  let date = new Date();
+  console.log(date);
+  
   return (
     <div className="flex flex-col w-64 h-full bg-gray-800">
       <div className="flex items-center justify-center px-4 py-8 text-white text-2xl font-bold bg-gray-900">
-        Good Morning!
+        {date.toLocaleTimeString()}
       </div>
       <nav className="flex flex-col flex-1 text-2xl items-center space-y-1">
         <a
