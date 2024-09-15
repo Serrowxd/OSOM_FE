@@ -46,7 +46,7 @@ function App() {
   };
 
   return (
-    <div className="h-screen flex flex-col md:flex-row">
+    <div className="main-background h-screen flex flex-col md:flex-row">
       <Sidebar />
       {/* Left Side: Task List */}
       <div className="w-full md:w-2/3 flex flex-col overflow-hidden">
@@ -62,14 +62,14 @@ function App() {
 
       {/* Right Side: Priority Message and Calendar */}
       <div className="w-full md:w-1/3 flex flex-col">
-        {/* Calendar */}
-        <div className="flex-1 p-6 border-t">
-          <CalendarComponent tasks={tasks} />
-        </div>
-
         {/* Priority Message */}
         <div className="flex-1 p-6">
           <PriorityMessage />
+        </div>
+
+        {/* Calendar */}
+        <div className="flex-1 p-6 border-t flex flex-col">
+          <CalendarComponent tasks={tasks} />
         </div>
       </div>
 

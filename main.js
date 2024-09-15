@@ -1,6 +1,7 @@
 const { app, BrowserWindow } = require("electron");
 const querystring = require("node:querystring");
 const path = require("path");
+const PouchDB = require("pouchdb");
 
 function createWindow() {
   const win = new BrowserWindow({
@@ -31,3 +32,40 @@ app.on("window-all-closed", () => {
     app.quit();
   }
 });
+
+const username = "admin";
+const password = "password";
+const localDB = new PouchDB("local-db");
+
+const remoteDB = new PouchDB("http://localhost:5984/osom_project", {
+  auth: {
+    username: "admin",
+    password: "password",
+  },
+});
+
+// const remoteDB = new PouchDB(
+//   `http://${username}:${password}@localhost:5984/osom_project`,
+// );
+
+localDB
+  .sync(remoteDB, {
+    live: true,
+    retry: true,
+  })
+  .on("change", (info) => {
+    // Handle change
+    console.log("Sync change:", info);
+  })
+  .on("paused", (err) => {
+    // Replication paused
+    console.log("Sync paused:", err);
+  })
+  .on("active", () => {
+    // Replication resumed
+    console.log("Sync active");
+  })
+  .on("error", (err) => {
+    // Handle error
+    console.error("Sync error:", err);
+  });

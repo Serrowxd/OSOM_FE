@@ -2,8 +2,38 @@
 @tailwind components;
 @tailwind utilities;
 
+/* See if we can write some classes that don't require !important to work */
+.react-calendar {
+    @apply border-none w-full h-full;
+    border: 0 none !important;
+    width: 100% !important;
+    line-height: 2em !important;
+    background-color: #2f2f2f !important;
+}
+
 .react-calendar .highlight {
-    background: #ffeb3b !important; /* Yellow background */
+    background: orange !important; /* Yellow background */
     color: black !important;
     border-radius: 50%;
+}
+
+.react-calendar__tile {
+    @apply p-2 text-center;
+}
+
+.react-calendar__navigation button {
+    @apply bg-transparent border-none text-lg mx-1;
+}
+
+.react-calendar__tile--active {
+    @apply bg-blue-200;
+}
+
+.react-calendar__tile:enabled:hover,
+.react-calendar__tile:enabled:focus {
+    @apply bg-blue-100;
+}
+
+.main-background {
+    background-color: #2f2f2f;
 }
