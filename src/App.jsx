@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import TaskList from "./components/TaskList";
 import AddTaskModal from "./components/AddTaskModal";
 import PriorityMessage from "./components/PriorityMessage";
@@ -6,22 +6,60 @@ import CalendarComponent from "./components/CalendarComponent";
 import Sidebar from "./components/Sidebar";
 import EditTaskModal from "./components/EditTaskModal";
 
+import { firestore } from "../firebase.js";
+import {
+  collection,
+  addDoc,
+  updateDoc,
+  deleteDoc,
+  doc,
+  onSnapshot,
+} from "firebase/firestore";
+
 function App() {
   const [tasks, setTasks] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [taskToEdit, setTaskToEdit] = useState(null);
 
+  // Fetch tasks from Firestore when component mounts
+  useEffect(() => {
+    const tasksCollection = collection(firestore, "tasks");
+
+    // Real-time updates using onSnapshot
+    const unsubscribe = onSnapshot(tasksCollection, (querySnapshot) => {
+      const tasksData = querySnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+      setTasks(tasksData);
+    });
+
+    // Clean up subscription on unmount
+    return () => unsubscribe();
+  }, []);
+
   // Handlers
   const handleAddTask = () => setIsModalOpen(true);
 
-  const handleSaveTask = (newTask) => {
-    setTasks([...tasks, newTask]);
-    setIsModalOpen(false);
+  const handleSaveTask = async (newTask) => {
+    try {
+      // Remove id if present
+      const { id, ...taskData } = newTask;
+      // Save the new task to Firestore
+      await addDoc(collection(firestore, "tasks"), taskData);
+      setIsModalOpen(false);
+    } catch (error) {
+      console.error("Error adding task: ", error);
+    }
   };
 
-  const handleRemoveTask = (taskId) => {
-    setTasks(tasks.filter((task) => task.id !== taskId));
+  const handleRemoveTask = async (taskId) => {
+    try {
+      await deleteDoc(doc(firestore, "tasks", taskId));
+    } catch (error) {
+      console.error("Error removing task: ", error);
+    }
   };
 
   const handleCloseModal = () => setIsModalOpen(false);
@@ -32,12 +70,16 @@ function App() {
     setIsEditModalOpen(true);
   };
 
-  const handleSaveEditedTask = (editedTask) => {
-    setTasks(
-      tasks.map((task) => (task.id === editedTask.id ? editedTask : task)),
-    );
-    setIsEditModalOpen(false);
-    setTaskToEdit(null);
+  const handleSaveEditedTask = async (editedTask) => {
+    try {
+      const taskRef = doc(firestore, "tasks", editedTask.id);
+      const { id, ...taskData } = editedTask; // Exclude id from the data
+      await updateDoc(taskRef, taskData);
+      setIsEditModalOpen(false);
+      setTaskToEdit(null);
+    } catch (error) {
+      console.error("Error updating task: ", error);
+    }
   };
 
   const handleCloseEditModal = () => {
